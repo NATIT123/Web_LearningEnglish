@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="admin/fragments/head::head">
+    <meta charset="ISO-8859-1">
+    <title>Quản lý Grammar</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div th:replace="admin/fragments/header ::header(user=${loggedInUser})"></div>
+
+
+<div th:replace="admin/fragments/sidebar :: sidebar(user=${loggedInUser})"></div>
+
+<div class="content-wrapper">
+
+    <div class="col-md-9 animated bounce">
+        <h3 class="page-header">Quản lý Bài hướng dẫn học từ vựng</h3>
+        <button class="btn btn-success btnAddVocab" data-toggle="modal" data-target="#vocabModal">Thêm mới</button>
+        <h4 style="color: red" id="info-success"></h4>
+<!--        <c:if test="${errorInfo != null }">-->
+<!--            <h4 style="color:red">${error}</h4>-->
+<!--            <h4>error: ${errorInfo}</h4>-->
+<!--        </c:if>-->
+        <hr/>
+
+        <table class="table table-hover nhanHieuTable" id="tableVocab">
+            <thead>
+            <tr>
+                <th>ID</th>
+
+                <th>Tên bài từ vựng</th>
+
+                <th>Ảnh</th>
+
+
+                <th></th>
+
+
+            </tr>
+            </thead>
+
+            <tbody>
+
+
+
+            </tbody>
+
+
+
+        </table>
+
+    </div>
+    <div class="modal fade" id="vocabModal" tabindex="-1" role="dialog" aria-labelleby="myModalLable">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class = "modal-title" id ="titleModal"> Thêm mới Vocab </h4>
+                    <input style="display:none;" id="idVocab">
+                </div>
+                <div class="modal-body">
+                    <div class= "row">
+
+                        <span class="bg-danger" id="vocab_errors"></span>
+
+                        <div class="form-group col-md-6">
+                            <label for="full_name" >Tên bài hướng dẫn Vocab:</label>
+                            <input class= "form-control"  name="vocab_name" type="text" id="full_name" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="imageVocab" >File ảnh bài hướng dẫn:</label>
+                            <input  type="file" class="form-control"  name="file_imageVocab" id="imageVocab"  accept="image/*" onchange="showMyImage(this)" required />
+                            <img alt="" src="" class="" id="previewImage" style="height: 100px; width: 150px">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="imageQuestion" >File ảnh câu hỏi:</label>
+                            <input type="file" class="form-control"  id="imageQuestion" name="file_imageQuestion" required accept="image/*"  multiple >
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="fileNge" >File nghe câu hỏi:</label>
+                            <input type="file" class="form-control"  id="fileNge" name="file_listen"  required  multiple accept=".mp3,.org" >
+
+                        </div>
+
+
+                        <div class="form-group col-md-12">
+                            <label for="fileExcel" >File nội dung (Excel):</label>
+                            <input type="file" class="form-control"  id="fileExcel" name="file_Excel"  required  accept=".xlsx,.xls" >
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addNewVocab" > Xác nhận</button>
+                    <button style="display:none;" type="button" class="btn btn-primary" id="updateVocab" > Cập nhật</button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="admin/fragments/footer :: footer"></div>
+
+    <div th:replace="admin/fragments/script :: script"></div>
+
+</div>
+<script>
+
+    function showMyImage(fileInput) {
+        let files = fileInput.files;
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            let imageType = /image.*/;
+            if (!file.type.match(imageType)) {
+                continue;
+            }
+            let img=document.getElementById("previewImage");
+            img.file = file;
+
+            let reader = new FileReader();
+            reader.onload = (function(aImg) {
+                return function(e) {
+                    aImg.src = e.target.result;
+                };
+            })(img);
+            reader.readAsDataURL(file);
+        }
+    }
+
+</script>
+</body>
+</html>

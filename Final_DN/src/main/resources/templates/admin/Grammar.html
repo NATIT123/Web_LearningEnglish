@@ -1,0 +1,175 @@
+<!DOCTYPE html >
+<html >
+<meta >
+<head th:replace="admin/fragments/head::head" >
+    <meta charset="ISO-8859-1">
+    <title>Quản lý Grammar</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div th:replace="admin/fragments/header ::header(user=${loggedInUser})"></div>
+
+
+<div th:replace="admin/fragments/sidebar :: sidebar(user=${loggedInUser})"></div>
+
+<div class="content-wrapper">
+
+    <div th:if="${param.success}"  class="alert alert-success" style="text-align: center">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${param.error}"  class="alert alert-danger" style="text-align: center">
+        <p th:text="${message}"></p>
+    </div>
+    <div class="col-md-9 animated bounce">
+        <h3 class="page-header">Quản lý bài hướng dẫn Grammar</h3>
+
+        <button class="btn btn-success btnAddVocab" data-toggle="modal"
+                data-target="#grammarModal">Thêm mới</button>
+        <h4 style="color: red" id="info-success"></h4>
+
+        <hr />
+
+        <table class="table table-hover nhanHieuTable" id="tableGrammar">
+            <thead>
+            <tr>
+                <th>ID</th>
+
+                <th>Tên bài Grammar </th>
+
+                <th>Ảnh</th>
+
+                <th>Chức năng</th>
+
+            </tr>
+            </thead>
+            <tr th:if="${listGrammar}" th:each="grammar:${listGrammar}" th:object="${grammar}">
+                <td th:text="*{id}"></td>
+                <td th:text="*{name}"></td>
+                <td th:text="*{image}"></td>
+                <td>
+                    <button class="btn btn-warning btnCapNhatBaiNghe">Cập nhật</button>
+                    <button class="btn btn-danger btnXoaBaiNghe" data-placement="top" title="Delete" data-toggle="modal" rel="tooltip" data-target="#deleteModal" th:data-id="*{id}" th:data-name="*{name}">Xóa</button>
+                </td>
+            </tr>
+            <tbody>
+
+
+
+            </tbody>
+
+
+
+        </table>
+
+    </div>
+    <form action="/admin/grammar/add" method="post" enctype="multipart/form-data">
+    <div class="modal fade" id="grammarModal" tabindex="-1" role="dialog"
+         aria-labelleby="myModalLable">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="titleModal">Thêm mới bài Grammar</h4>
+                </div>
+
+                <div class="modal-body">
+                    <input style="display:none"  id="idGrammarModal">
+
+                    <div class="row">
+                        <span class="bg-danger" id="vocab_errors"></span>
+
+                        <div class="form-group col-md-6">
+                            <label for="nameGrammar">Tên bài grammar</label> <input id="nameGrammar" name="name"
+                                                                  class="form-control">
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="file_Image_Grammar">Ảnh bài grammar</label>
+                            <input type="file" id="file_Image_Grammar" class="form-control" name="image"    accept="image/*">
+
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="markdown-editor">Chỉnh sửa nội dung bài Grammar:</label>
+
+                            <textarea id="markdown-editor" name="content"></textarea>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" id="btnAddNewGrammar" class="btn btn-primary">Xác nhận</button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <form class="taiKhoanForm" id="delete-form" method="post" >
+        <div>
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Delete User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure to delete grammar <strong></strong>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="close-modal" data-dismiss="modal">No</button>
+                            <button id="btn-delete-movie" type="button" class="btn btn-danger">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var text=document.querySelector('.modal-body strong');
+    var grammarId;
+    var deleteform=document.forms['delete-form'];
+    document.addEventListener('DOMContentLoaded',function(){
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            var button=$(event.relatedTarget);
+            grammarId=button.data('id')
+            var name=button.data('name')
+            text.innerHTML=name;
+        });
+
+        var btndeletegrammar=document.getElementById('btn-delete-movie');
+        btndeletegrammar.onclick=function(){
+            deleteform.action="/admin/examListening/delete/"+examId;
+            deleteform.submit();
+        }
+    });
+
+
+</script>
+
+<div th:replace="admin/fragments/footer :: footer"></div>
+
+<div th:replace="admin/fragments/script :: script"></div>
+
+
+</body>
+</html>

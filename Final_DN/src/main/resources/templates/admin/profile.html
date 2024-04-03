@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html>
+<head
+        title="Profile"
+        th:replace="admin/fragments/head::head">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+
+<div th:replace="admin/fragments/header ::header(user=${loggedInUser})"></div>
+
+
+<div th:replace="admin/fragments/sidebar :: sidebar(user=${loggedInUser})"></div>
+
+<div class="content-wrapper">
+
+    <div th:if="${param.success}"  class="alert alert-success" style="text-align: center">
+        <p>Update Successfully</p>
+    </div>
+
+    <div th:if="${param._error}"  class="alert alert-danger" style="text-align: center">
+        <p>Old Password is not correct</p>
+    </div>
+
+    <div th:if="${param.__error}"  class="alert alert-danger" style="text-align: center">
+        <p>New Password and Confirm Password is not matching</p>
+    </div>
+
+    <div th:if="${param.error}"  class="alert alert-danger" style="text-align: center">
+        <p>Update Failed</p>
+    </div>
+<div class="col-md-9 animated bounce">
+
+
+    <h3 class="page-header">Thông tin cá nhân</h3>
+
+    <button class="btn btn-success btnCapNhatThongTin">Cập nhật
+        thông tin</button>
+    &nbsp;&nbsp;&nbsp;
+    <button class="btn btn-primary btnDoiMatKhau">Đổi mật khẩu</button>
+    <hr />
+
+    <form class="form-profile">
+
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="hidden" class="form-control-plaintext nguoiDungId"
+                      th:value="${loggedInUser.id}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="staticFullname" class="col-sm-2 col-form-label">Họ
+                Tên</label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="staticFullname"
+                       th:value="${loggedInUser.fullname}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Email
+                đăng ký</label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                       th:value="${loggedInUser.email}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Số
+                điện thoại</label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext"
+                       th:value="${loggedInUser.phoneNumber}">
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="row col-md-6">
+    <form class="formCapNhat"
+          action="/admin/profile/update" method="post" enctype="multipart/form-data">
+        <div>
+            <div class="modal fade" id="capNhatModal" tabindex="-1"
+                 role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Cập nhật
+                                thông tin cá nhân</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <input type="hidden" name="${_csrf.parameterName}"
+                                   value="${_csrf.token}" />
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" name="id"
+                                       th:value="${loggedInUser.id}" />
+                            </div>
+
+                            <img th:src="'/img/avatar/'+ ${loggedInUser.image}" alt="" class="avatar">
+                            <input type="hidden" th:value="${loggedInUser.image}" name="old_Image">
+                            <div class="form-group">
+                                <label for="name">Image</label> <input type="file"
+                                                                        id="image"
+                                                                        class="form-control" name="image" required="required" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">Họ tên</label> <input type="text"
+                                                                        id="name"
+                                                                        class="form-control" name="fullName" required="required" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Số điện thoại</label> <input type="text"
+                                                                               class="form-control" name="phoneNumber" required="required" />
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Hủy</button>
+                                <input class="btn btn-primary" id="btnSubmit" type="submit"
+                                       value="Xác nhận" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form class="formDoiMatKhau" action="/admin/profile/changePass" method="post" >
+        <div>
+            <div class="modal fade" id="doiMKModal" tabindex="-1" role="dialog"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true"
+                 data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="_exampleModalLabel">Đổi mật khẩu</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <input type="hidden" name="${_csrf.parameterName}"
+                                       value="${_csrf.token}" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">Mật khẩu cũ</label> <input type="password" th:field="${userChange.password}"
+                                                                             class="form-control" name="oldPassword" required="required" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Mật khẩu mới</label> <input type="password" th:field="${userChange.confirmPassword}"
+                                                                              class="form-control" name="newPassword" required="required" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nhắc lại mật khẩu mới</label> <input th:field="${userChange.phoneNumber}"
+                                    type="password" class="form-control" name="confirmNewPassword"
+                                    required="required" />
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Hủy</button>
+                                <input class="btn btn-primary" type="submit"
+                                       id="btnXacNhanDoiMK" value="Xác nhận" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+</div>
+<div th:replace="admin/fragments/footer :: footer"></div>
+
+<div th:replace="admin/fragments/script :: script"></div>
+
+<!--<script src="<c:url value='/js/admin/profileAdmin.js'/>"></script>-->
+</body>
+</html>

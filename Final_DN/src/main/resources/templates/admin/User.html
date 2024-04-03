@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head
+        title="Account"
+        th:replace="admin/fragments/head::head">
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div th:replace="admin/fragments/header ::header(user=${loggedInUser})"></div>
+
+
+<div th:replace="admin/fragments/sidebar :: sidebar(user=${loggedInUser})"></div>
+
+<div class="content-wrapper">
+
+    <div th:if="${param.error}"  class="alert alert-danger" style="text-align: center">
+        <p th:text="${_message}"></p>
+    </div>
+
+    <div th:if="${param.success}"  class="alert alert-success" style="text-align: center">
+        <p th:text="${_message}"></p>
+    </div>
+
+    <div class="col-md-9 animated bounce">
+        <h3 class="page-header">Quản lý Tài khoản</h3>
+
+        <button class="btn btn-success btnThemTaiKhoan">Thêm mới tài
+            khoản</button>
+        <hr>
+<!--        <div class="form-group form-inline">-->
+<!--            <label for="_role"><strong>Lọc tài khoản:</strong> </label>-->
+<!--            <select id="_role" class="form-control">-->
+<!--                <option th:if="${listRole}" th:each="role:${listRole}" name="_role"-->
+<!--                        class="form-control" th:text="${role.name}" th:value="${role.id}" >-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+        <hr>
+
+
+        <table class="table table-hover taiKhoanTable"
+               style="text-align: center;">
+            <thead>
+            <tr>
+                <th>Mã tài khoản</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Vai trò</th>
+                <th>Ngày tạo</th>
+                <th>Ngày chỉnh sửa</th>
+                <th>Chức năng</th>
+            </tr>
+            </thead>
+            <tr th:if="${ListAccount}" th:each="user:${ListAccount}" >
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.fullname}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.phoneNumber}"></td>
+                <th th:text="${user.getRoles()[0].name}"></th>
+                <td th:text="${user.createdAt}"></td>
+                <td th:text="${user.updatedAt}"></td>
+                <td><button type="button" class="btn btn-danger btn-sm rounded-0" data-placement="top" title="Delete" data-toggle="modal" rel="tooltip" data-target="#deleteModal" th:data-id="${user.id}" th:data-name="*{user.fullname}"><i class="fa fa-trash"></i></button></td>
+            </tr>
+            <tbody>
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="row col-md-6">
+        <form class="taiKhoanForm" id="form" action="/admin/account/add" method="post">
+            <div>
+                <div class="modal fade" id="taiKhoanModal" tabindex="-1"
+                     role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Tạo mới tài
+                                    khoản</h5>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label for="email">Email</label> <input type="email" id="email" th:field="*{userAdd.email}"
+                                                                           class="form-control" name="email" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Mật khẩu:(8-32 ký tự)</label> <input id="password" th:field="*{userAdd.password}"
+                                        type="password" class="form-control" name="password" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Nhắc lại mật khẩu:</label> <input type="password" id="confirmPassword" th:field="*{userAdd.confirmPassword}"
+                                                                                        class="form-control" name="confirmPassword" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="role">Chọn vai trò:</label>
+                                        <label class="radio-inline" th:if="${listRole}" th:each="role:${listRole}" >
+                                            <input type="radio" id="role" required th:field="*{userAdd.roleSelect}"
+                                                   name="role" th:value="${role.name}" th:text="${role.name}" checked="checked">
+                                        </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="name">Họ tên:</label> <input type="text" id="name" th:field="*{userAdd.fullname}"
+                                                                             class="form-control" name="fullName" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Số điện thoại:</label> <input type="text" id="phone" th:field="*{userAdd.phoneNumber}"
+                                                                                    class="form-control" name="phone" required />
+                                </div>
+
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Hủy</button>
+                                    <input class="btn btn-primary" id="btnSubmit" type="submit"
+                                           value="Xác nhận" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+<!--    Modal Delete-->
+    <form class="taiKhoanForm" id="delete-form" method="post" >
+    <div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Delete User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure to delete movie <strong></strong>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="close-modal" data-dismiss="modal">No</button>
+                    <button id="btn-delete-movie" type="button" class="btn btn-danger">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </form>
+
+    <script>
+        var text=document.querySelector('.modal-body strong');
+        var userId;
+        var deleteform=document.forms['delete-form'];
+        console.log(deleteform);
+        document.addEventListener('DOMContentLoaded',function(){
+            $('#deleteModal').on('show.bs.modal', function(event) {
+                var button=$(event.relatedTarget);
+                userId=button.data('id')
+                var name=button.data('name')
+                text.innerHTML=name;
+            });
+
+            var btndeleteuser=document.getElementById('btn-delete-movie');
+            btndeleteuser.onclick=function(){
+                deleteform.action='/admin/account/delete/'+userId;
+                deleteform.submit();
+            }
+        });
+
+
+    </script>
+
+
+</div>
+
+<div th:replace="admin/fragments/footer :: footer"></div>
+
+<div th:replace="admin/fragments/script :: script"></div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="admin/fragments/head::head">
+    <meta charset="ISO-8859-1">
+    <title>Quản lý bài tập nghe</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        .hidden {
+            display: none;
+        }
+        .error-message {
+            color: red;
+        }
+
+    </style>
+
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div th:replace="admin/fragments/header ::header(user=${loggedInUser})"></div>
+
+
+<div th:replace="admin/fragments/sidebar :: sidebar(user=${loggedInUser})"></div>
+
+<div class="content-wrapper">
+
+    <div th:if="${param.success}"  class="alert alert-success" style="text-align: center">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${param.error}"  class="alert alert-danger" style="text-align: center">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div class="col-md-9 animated bounce">
+        <h3 class="page-header">Quản lý Bài Nghe</h3>
+
+        <button class="btn btn-success btnThemBaiNghe">Thêm mới bài nghe</button>
+        <hr/>
+
+        <form class="form-inline" id="searchForm" name="searchObject" method="post" action="/admin/examListening/search">
+
+            <div class="form-group">
+                <select class="form-control" name="partSearch" id="partSearch">
+                    <option value="">Tất cả</option>
+                    <option value="1">Part 1</option>
+                    <option value="2">Part 2</option>
+                    <option value="3">Part 3</option>
+                    <option value="4">Part 4</option>
+                </select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <select class="form-control" name="doKhoSearch" id="doKhoSearch">
+                    <option value="">Tất cả</option>
+                    <option value="Mức dễ">Mức dễ</option>
+                    <option value="Mức trung bình">Mức trung bình</option>
+                    <option value="Mức khó">Mức khó</option>
+                </select>
+            </div>
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary" id="btnDuyetBaiNghe">Duyệt Bài nghe</button>
+        </form>
+
+        <div class="form-group form-inline"
+             style="float: right; margin-right: 10px; top: -33px; position: relative;">
+            <form class="form-inline" method="post" action="/admin/examListening/searchAll">
+            <input class="form-control" type="text" id="searchById" name="searchAll"
+                   placeholder="Nhập mã để tìm nhanh"> <span
+                class="glyphicon glyphicon-search" aria-hidden="true"
+                style="left: -30px; top: 4px;"></span>
+                <button type="submit" class="btn btn-primary" >Tìm kiếm</button>
+            </form>
+        </div>
+
+        <hr />
+
+        <table class="table table-hover baiNgheTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên bài nghe</th>
+                <th>Part LC</th>
+                <th>Độ khó</th>
+                <th>Chức năng</th>
+            </tr>
+            </thead>
+            <tr th:if="${listListening}" th:each="listen:${listListening}" th:object="${listen}">
+                <td th:text="*{id}"></td>
+                <td th:text="*{name}"></td>
+                <td th:text="*{part}"></td>
+                <td th:text="*{level}"></td>
+                <td>
+                    <button class="btn btn-warning btnCapNhatBaiNghe">Cập nhật</button>
+                    <button class="btn btn-danger btnXoaBaiNghe" data-placement="top" title="Delete" data-toggle="modal" rel="tooltip" data-target="#deleteModal" th:data-id="*{id}" th:data-name="*{name}">Xóa</button>
+                </td>
+            </tr>
+            <tbody>
+            </tbody>
+
+        </table>
+
+        <ul class="pagination">
+        </ul>
+    </div>
+    <div class="row col-md-6">
+        <form class="baiNgheForm" action="/admin/examListening/add" id="formBaiNghe" enctype="multipart/form-data" method="post">
+
+            <div>
+                <div class="modal fade" id="baiNgheModal" tabindex="-1"
+                     role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Tạo mới/Cập nhật bài nghe</h5>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" id="id" name="id"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Tên bài nghe:</label>
+                                    <input type="text" id="name"
+                                           class="form-control"  name="searchAll" placeholder="Nhập vào tên bài nghe" required >
+                                </div>
+                                <div class="form-group">
+                                    <label for="phanThi">Phần thi (Part)</label>
+                                    <select id="phanThi" class="form-control" name="part">
+                                        <option value="Part 1-Photographs">Part 1-Photographs</option>
+                                        <option value="Part 2-Question response">Part 2-Question response</option>
+                                        <option value="Part 3-Short Conversations">Part 3-Short Conversations</option>
+                                        <option value="Part 4-Short talks">Part 4-Short talks</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="doKho">Độ khó</label>
+                                    <select name="level" id="doKho" class="form-control">
+                                        <option value="Mức dễ">Mức dễ</option>
+                                        <option value="Mức trung bình">Mức trung bình</option>
+                                        <option value="Mức khó">Mức khó</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="photoBaiNghe">File Ảnh</label>
+                                    <input type="file" class="form-control" id="photoBaiNghe" name="image" required >
+                                    <img alt="" src="" class="hidden" id="previewImage" style="height: 100px; width: 165px">
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="audioBaiNghe">File Audio:</label>
+                                    <input type="file"
+                                           class="form-control" id="audioBaiNghe" name="audio" required >
+                                    <audio id="previewAudio" controls class="hidden" style="width: 300px;padding-top: 10px">
+                                        <source src="" id="previewAudioSrc" />
+                                    </audio>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="fileCauHoi">Danh sách câu hỏi (Excel):</label>
+                                    <input type="file"
+                                           class="form-control" id="fileCauHoi" name="excel" required >
+                                    <a id="linkExcel" class="hidden" href="">Link file câu hỏi cũ </a>
+                                </div>
+
+                                <!-- 								<div class="form-group">
+                                                                    <label for="name">Mô tả phần nghe (Script): </label>
+                                                                    <textarea class="form-control" id="script" name="script"></textarea>
+                                                                </div> -->
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Hủy</button>
+                                    <input class="btn btn-primary" id="btnSubmit" type="submit"
+                                           value="Xác nhận"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <form class="taiKhoanForm" id="delete-form" method="post" >
+        <div>
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Delete User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure to delete listen <strong></strong>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="close-modal" data-dismiss="modal">No</button>
+                            <button id="btn-delete-movie" type="button" class="btn btn-danger">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var text=document.querySelector('.modal-body strong');
+    var examId;
+    var deleteform=document.forms['delete-form'];
+    document.addEventListener('DOMContentLoaded',function(){
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            var button=$(event.relatedTarget);
+            examId=button.data('id')
+            var name=button.data('name')
+            text.innerHTML=name;
+        });
+
+        var btndeletelisten=document.getElementById('btn-delete-movie');
+        btndeletelisten.onclick=function(){
+            deleteform.action="/admin/examListening/delete/"+examId;
+            deleteform.submit();
+        }
+    });
+
+
+</script>
+
+<div th:replace="admin/fragments/footer :: footer"></div>
+
+<div th:replace="admin/fragments/script :: script"></div>
+
+
+
+</body>
+</html>
